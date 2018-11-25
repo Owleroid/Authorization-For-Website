@@ -1,0 +1,19 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/profile.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <div class="profile-block">
+            <h1>Profile info</h1>
+            <p>Name: <%= user.name %></p>
+            <p>Surname: <%= user.surname %></p>
+            <p>E-mail: <%= user.email %></p>
+            <p>Phone: <%= user.phone %></p>
+        </div>
+    </main>
+<%- include('../includes/end.ejs') %>

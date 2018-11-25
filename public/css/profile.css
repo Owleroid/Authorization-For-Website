@@ -1,0 +1,19 @@
+.profile-block {
+    margin: 1.25rem auto;
+    padding: 1.25rem;
+    width: 20rem;
+    max-width: 90%;
+    border: 1px solid #00695c;
+    border-radius: 20px;
+}
+
+.profile-block h1 {
+    text-align: center;
+    margin: 5px auto;
+}
+
+.profile-block p {
+    margin-top: 1.1rem;
+    margin-bottom: 0;
+}
+
