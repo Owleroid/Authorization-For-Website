@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
       api_key:
-        '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'
+        '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'
     }
   })
 );
@@ -212,7 +212,7 @@ exports.postReset = (req, res, next) => {
         return user.save();
       })
       .then(result => {
-        res.redirect('/');
+        res.redirect('/login');
         transporter.sendMail({
           to: req.body.email,
           from: 'authorization-test@test.com',
