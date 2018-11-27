@@ -8,12 +8,14 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
+const compression = require('compression');
+const helmet = require('helmet');
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
 const MONGODB_URI =
-  'mongodb+srv://R_W:Qwerty13579@cluster0-hwast.mongodb.net/Authorization';
+  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-hwast.mongodb.net/Authorization`;
 
 const app = express();
 const store = new MongoDBStore({
@@ -47,6 +49,9 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const authRoutes = require('./routes/auth');
+
+app.use(compression());
+app.use(helmet());
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -110,7 +115,7 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    app.listen(3000);
+    app.listen(process.env.PORT || 3000);
   })
   .catch(err => {
     console.log(err);
