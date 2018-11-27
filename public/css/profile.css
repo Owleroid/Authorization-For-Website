@@ -3,8 +3,9 @@
     padding: 1.25rem;
     width: 20rem;
     max-width: 90%;
-    border: 1px solid #00695c;
+    border: 1px solid #639066;
     border-radius: 20px;
+    background-color: #2C2D40;
 }
 
 .profile-block h1 {
@@ -15,5 +16,29 @@
 .profile-block p {
     margin-top: 1.1rem;
     margin-bottom: 0;
+    color: #ffffff;
 }
 
+.profile-image {
+    margin: 5px auto;
+    width: 250px;
+    height: 250px;
+    border: 1px solid #639066;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-image img {
+    position: relative;
+    right: 20px;
+    width: auto;
+    height: 100%;
+    background-color: #ffffff;
+}
+
+@media screen and (max-width: 360px) {
+    .profile-image {
+        width: 200px;
+        height: 200px;
+    }
+}

@@ -3,15 +3,16 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
-const { validationResult } = require('express-validator/check');
+const {
+  validationResult
+} = require('express-validator/check');
 
 const User = require('../models/user');
 
 const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
-      api_key:
-        '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'
+      api_key: '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'
     }
   })
 );
@@ -76,7 +77,9 @@ exports.postLogin = (req, res, next) => {
     });
   }
 
-  User.findOne({ email: email })
+  User.findOne({
+      email: email
+    })
     .then(user => {
       if (!user) {
         return res.status(422).render('auth/login', {
@@ -117,15 +120,38 @@ exports.postLogin = (req, res, next) => {
           res.redirect('/login');
         });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postSignup = (req, res, next) => {
+  const image = req.file;
   const name = req.body.name;
   const surname = req.body.surname;
   const phone = req.body.phone;
   const email = req.body.email;
   const password = req.body.password;
+
+  if(!image) {
+    return res.status(422).render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Signup',
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        name: name,
+        surname: surname,
+        phone: phone,
+        email: email,
+        password: password,
+        confirmPassword: req.body.confirmPassword
+      },
+      errorMessage: 'Only jpg, jpeg or png are allowed.',
+      validationErrors: []
+    });
+  }
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -146,16 +172,18 @@ exports.postSignup = (req, res, next) => {
     });
   }
 
+  const imagePath = image.path;
+
   bcrypt
     .hash(password, 12)
     .then(hashedPassword => {
       const user = new User({
+        image: imagePath,
         name: name,
         surname: surname,
         phone: phone,
         email: email,
-        password: hashedPassword,
-        cart: { items: [] }
+        password: hashedPassword
       });
       return user.save();
     })
@@ -169,7 +197,9 @@ exports.postSignup = (req, res, next) => {
       });
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -201,7 +231,9 @@ exports.postReset = (req, res, next) => {
       return res.redirect('/reset');
     }
     const token = buffer.toString('hex');
-    User.findOne({ email: req.body.email })
+    User.findOne({
+        email: req.body.email
+      })
       .then(user => {
         if (!user) {
           req.flash('error', 'No account with that email found.');
@@ -224,7 +256,9 @@ exports.postReset = (req, res, next) => {
         });
       })
       .catch(err => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
       });
   });
 };
@@ -232,7 +266,12 @@ exports.postReset = (req, res, next) => {
 exports.getNewPassword = (req, res, next) => {
   const token = req.params.token;
 
-  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+  User.findOne({
+      resetToken: token,
+      resetTokenExpiration: {
+        $gt: Date.now()
+      }
+    })
     .then(user => {
       let message = req.flash('error');
       if (message.length > 0) {
@@ -249,7 +288,9 @@ exports.getNewPassword = (req, res, next) => {
       });
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -260,10 +301,12 @@ exports.postNewPassword = (req, res, next) => {
   let resetUser;
 
   User.findOne({
-    resetToken: passwordToken,
-    resetTokenExpiration: { $gt: Date.now() },
-    _id: userId
-  })
+      resetToken: passwordToken,
+      resetTokenExpiration: {
+        $gt: Date.now()
+      },
+      _id: userId
+    })
     .then(user => {
       resetUser = user;
       return bcrypt.hash(newPassword, 12);
@@ -278,11 +321,14 @@ exports.postNewPassword = (req, res, next) => {
       res.redirect('/login');
     })
     .catch(err => {
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
 exports.getUserProfile = (req, res, next) => {
+  const userImage = req.session.user.image;
   const userName = req.session.user.name;
   const userSurname = req.session.user.surname;
   const userPhone = req.session.user.phone;
@@ -292,6 +338,7 @@ exports.getUserProfile = (req, res, next) => {
     path: '/profile',
     pageTitle: 'User Profile',
     user: {
+      image: userImage,
       name: userName,
       surname: userSurname,
       phone: userPhone,
