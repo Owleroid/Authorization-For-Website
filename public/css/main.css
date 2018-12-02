@@ -83,6 +83,7 @@ button {
 }
 
 .mobile-nav {
+  display: none;
   width: 30rem;
   height: 100vh;
   max-width: 90%;
@@ -105,6 +106,7 @@ button {
 }
 
 .mobile-nav.open {
+  display: block;
   -webkit-transform: translateX(0);
   -moz-transform: translateX(0);
   -ms-transform: translateX(0);
